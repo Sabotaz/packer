@@ -16,8 +16,8 @@ def comp(wd, f, imports):
     lines = []
     with open(wd + "/" + f, 'r') as infile:
         for line in infile:
-            if line.startswith("import "):
-                cible = line[7:].rstrip()
+            if line.startswith("import ") or (line.startswith("from ") and line.rstrip().endswith(" import *")):
+                cible = line[7:].rstrip() if line.startswith("import ") else line[5:-9].rstrip()
                 if cible in imports:
                     continue
                 imports.add(cible)
