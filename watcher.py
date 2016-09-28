@@ -28,8 +28,9 @@ def comp(wd, f, imports):
             else:
                 for fichier in imports:
                     if fichier + "." in line:
-                        line = line.replace(fichier + ".", "")
-                        break
+                        if os.path.isfile(wd + "/" + fichier + ".py"):
+                            line = line.replace(fichier + ".", "")
+                            break
                 lines.append(line)
     return lines
 
