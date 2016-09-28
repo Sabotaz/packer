@@ -26,6 +26,10 @@ def comp(wd, f, imports):
                 else:
                     lines.append(line)
             else:
+                for fichier in imports:
+                    if fichier + "." in line:
+                        line = line.replace(fichier + ".", "")
+                        break
                 lines.append(line)
     return lines
 
@@ -39,24 +43,29 @@ def recompile(wd):
 
 
 class Handler(FileSystemEventHandler):
+    def __init__(self, cible):
+        FileSystemEventHandler.__init__(self)
+        self.directory = cible
+
     def on_deleted(self, event):
         print event
-        recompile("src")
+        recompile(self.directory)
 
     def on_modified(self, event):
         if event.event_type != "DirModifiedEvent":
             print event
-            recompile("src")
+            recompile(self.directory)
 
     def on_moved(self, event):
         print event
-        recompile("src")
+        recompile(self.directory)
 
 if __name__ == "__main__":
-    event_handler = Handler()
+    directory = raw_input()
+    event_handler = Handler(directory)
     observer = Observer()
-    observer.schedule(event_handler, "src", recursive=True)
-    recompile("src")
+    observer.schedule(event_handler, directory, recursive=True)
+    recompile(directory)
     observer.start()
     try:
         while True:
